@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import heroPortraitUrl from '../../../assets/hero-portrait-3d.png';
+import { HERO_PORTRAIT_BASE64 } from './HeroPortraitData';
 
 const VERTEX_SHADER = `
 varying vec2 vUv;
@@ -115,26 +116,26 @@ export class HeroPortrait3D {
     const geometry = new THREE.PlaneGeometry(3.65, 3.86, 64, 64);
 
     const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load(
-      heroPortraitUrl,
-      undefined,
-      undefined,
-      () => {
-        // Robust fallback to static public asset path if primary Vite asset fails
-        textureLoader.load('/assets/hero-portrait-3d.png', (fallbackTex) => {
-          fallbackTex.generateMipmaps = true;
-          fallbackTex.minFilter = THREE.LinearMipmapLinearFilter;
-          fallbackTex.magFilter = THREE.LinearFilter;
-          if (this.material) {
-            this.material.uniforms.uTexture.value = fallbackTex;
-            this.material.needsUpdate = true;
-          }
-        });
-      }
-    );
+    
+    // Immediate Base64 inline texture (guaranteed 100% available with zero network delay)
+    const texture = textureLoader.load(HERO_PORTRAIT_BASE64);
     texture.generateMipmaps = true;
     texture.minFilter = THREE.LinearMipmapLinearFilter;
     texture.magFilter = THREE.LinearFilter;
+
+    // Asynchronously upgrade to Vite production hashed asset if loaded by browser
+    textureLoader.load(
+      heroPortraitUrl,
+      (loadedTex) => {
+        loadedTex.generateMipmaps = true;
+        loadedTex.minFilter = THREE.LinearMipmapLinearFilter;
+        loadedTex.magFilter = THREE.LinearFilter;
+        if (this.material) {
+          this.material.uniforms.uTexture.value = loadedTex;
+          this.material.needsUpdate = true;
+        }
+      }
+    );
 
     this.material = new THREE.ShaderMaterial({
       vertexShader: VERTEX_SHADER,
