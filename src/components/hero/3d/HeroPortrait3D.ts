@@ -115,7 +115,23 @@ export class HeroPortrait3D {
     const geometry = new THREE.PlaneGeometry(3.65, 3.86, 64, 64);
 
     const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load(heroPortraitUrl);
+    const texture = textureLoader.load(
+      heroPortraitUrl,
+      undefined,
+      undefined,
+      () => {
+        // Robust fallback to static public asset path if primary Vite asset fails
+        textureLoader.load('/assets/hero-portrait-3d.png', (fallbackTex) => {
+          fallbackTex.generateMipmaps = true;
+          fallbackTex.minFilter = THREE.LinearMipmapLinearFilter;
+          fallbackTex.magFilter = THREE.LinearFilter;
+          if (this.material) {
+            this.material.uniforms.uTexture.value = fallbackTex;
+            this.material.needsUpdate = true;
+          }
+        });
+      }
+    );
     texture.generateMipmaps = true;
     texture.minFilter = THREE.LinearMipmapLinearFilter;
     texture.magFilter = THREE.LinearFilter;
