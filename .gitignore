@@ -25,4 +25,5 @@ dist-ssr
 
 # Temporary test scripts / screenshots
 scratch/
-*.png
+qa_results/
+screenshot*.png

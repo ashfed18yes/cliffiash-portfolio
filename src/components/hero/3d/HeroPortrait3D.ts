@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import heroPortraitUrl from '../../../assets/hero-portrait-3d.png';
 
 const VERTEX_SHADER = `
 varying vec2 vUv;
@@ -114,7 +115,7 @@ export class HeroPortrait3D {
     const geometry = new THREE.PlaneGeometry(3.65, 3.86, 64, 64);
 
     const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load('/assets/hero-portrait-3d.png');
+    const texture = textureLoader.load(heroPortraitUrl);
     texture.generateMipmaps = true;
     texture.minFilter = THREE.LinearMipmapLinearFilter;
     texture.magFilter = THREE.LinearFilter;
