@@ -153,17 +153,17 @@ export class HeroPortrait3D {
         uOpacity: { value: 1.0 },
       },
       transparent: true,
-      depthTest: true,
-      depthWrite: true,
+      depthTest: false,
+      depthWrite: false,
       side: THREE.FrontSide,
     });
 
     this.mesh = new THREE.Mesh(geometry, this.material);
-    this.mesh.renderOrder = 1; // Renders before foreground wave mounds (renderOrder: 2)
+    this.mesh.renderOrder = 5; // Render after background elements
     this.group.add(this.mesh);
 
-    // Initial position in 3D scene (z = 0.5 sits in front of text and behind wave at z = 1.8-2.1)
-    this.group.position.set(-0.05, -0.42, 0.5);
+    // Initial position in 3D scene (z = 2.0 brings portrait cleanly in front of depth buffer)
+    this.group.position.set(-0.05, -0.42, 2.0);
   }
 
   public update(
@@ -180,7 +180,7 @@ export class HeroPortrait3D {
     const baseScale = isMobile ? 0.68 : isTablet ? 0.86 : 1.0;
     const baseY = isMobile ? -0.42 : isTablet ? -0.32 : -0.42;
     const baseX = -0.05;
-    const baseZ = 0.5;
+    const baseZ = 2.0;
 
     // 2. Mouse Parallax (Subtle 3D perspective shift, face remains perfectly stable)
     const targetParallaxX = mouseX * 0.15;
